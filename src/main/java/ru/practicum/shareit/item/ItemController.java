@@ -18,13 +18,13 @@ public class ItemController {
     private final ItemService itemService;
 
     @PostMapping
-    public Item createItem (@RequestHeader("X-Sharer-User-Id") int userId,
+    public Item createItem(@RequestHeader("X-Sharer-User-Id") int userId,
                             @RequestBody Item item) {
         return itemService.createItem(userId, item);
     }
 
     @PatchMapping("/{itemId}")
-    public Item updateItem (@RequestHeader("X-Sharer-User-Id") int userId,
+    public Item updateItem(@RequestHeader("X-Sharer-User-Id") int userId,
                             @RequestBody Item item,
                             @PathVariable int itemId) {
         return itemService.updateItem(userId, item, itemId);

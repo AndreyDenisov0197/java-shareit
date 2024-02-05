@@ -12,7 +12,7 @@ public class ItemRequestStorage {
     private final Map<Integer, ItemRequest> requestMap = new HashMap<>();
     private int index;
 
-    public ItemRequest createRequest (ItemRequest itemRequest) {
+    public ItemRequest createRequest(ItemRequest itemRequest) {
         itemRequest.setId(index++);
         int id = itemRequest.getId();
         requestMap.put(id, itemRequest);

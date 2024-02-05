@@ -63,7 +63,7 @@ public class UserStorage {
 
     public User getUserById(int id) {
         if (!allUsers.containsKey(id)) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND , "Такого пользователя не существует!");
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Такого пользователя не существует!");
         }
 
         User user = allUsers.get(id);
