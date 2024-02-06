@@ -2,14 +2,10 @@ package ru.practicum.shareit.item.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
-import ru.practicum.shareit.item.ItemStorage;
+import ru.practicum.shareit.item.storage.ItemStorage;
 import ru.practicum.shareit.item.dto.ItemDto;
-import ru.practicum.shareit.item.model.Item;
-import ru.practicum.shareit.item.service.ItemService;
-import ru.practicum.shareit.user.UserStorage;
+import ru.practicum.shareit.user.storage.UserStorage;
 
 import java.util.List;
 
@@ -22,14 +18,14 @@ public class ItemServiceIml implements ItemService {
     private final UserStorage userStorage;
 
     @Override
-    public Item createItem(int userId, Item item) {
-        validate(item, userId);
-        return itemStorage.createItem(userId, item);
+    public ItemDto createItem(int userId, ItemDto itemDto) {
+        userStorage.getUserById(userId);
+        return itemStorage.createItem(userId, itemDto);
     }
 
     @Override
-    public Item updateItem(int userId, Item item, int itemId) {
-        return itemStorage.updateItem(userId, item, itemId);
+    public ItemDto updateItem(int userId, ItemDto itemDto, int itemId) {
+        return itemStorage.updateItem(userId, itemDto, itemId);
     }
 
     @Override
@@ -38,33 +34,12 @@ public class ItemServiceIml implements ItemService {
     }
 
     @Override
-    public List<Item> getItemsByUser(int userId) {
+    public List<ItemDto> getItemsByUser(int userId) {
         return itemStorage.getItemsByUser(userId);
     }
 
     @Override
     public List<ItemDto> searchItem(String text) {
         return itemStorage.searchItem(text);
-    }
-
-    private void validate(Item item, int userId) {
-        String name = item.getName();
-        if (name == null || name.isBlank()) {
-            log.error("Пустое  название");
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Пустое название");
-        }
-
-        String description = item.getDescription();
-        if (description == null || description.isBlank()) {
-            log.error("Пустое описание");
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Пустое описание");
-        }
-        userStorage.getUserById(userId);
-
-        Boolean available = item.getAvailable();
-        if (available == null) {
-            log.error("Нет в наличии");
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Нет в наличии");
-        }
     }
 }
