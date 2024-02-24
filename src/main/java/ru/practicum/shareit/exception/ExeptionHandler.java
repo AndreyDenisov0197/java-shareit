@@ -16,7 +16,6 @@ public class ExeptionHandler {
 
     @ExceptionHandler(NotFoundException.class)
     public ResponseEntity<String> notFoundHandle(Exception e) {
-
         log.error("{} : {}", e.getClass().getSimpleName(), e.getMessage());
         return new ResponseEntity<>(e.getClass().getSimpleName() + " : " + e.getMessage(),
                 HttpStatus.NOT_FOUND);
@@ -25,14 +24,12 @@ public class ExeptionHandler {
     @ExceptionHandler(ConstraintViolationException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public Map<String, String> constraintViolationExceptionhandle(ConstraintViolationException e) {
-
         log.error("{} : {}", e.getClass().getSimpleName(), e.getMessage());
         return Map.of("error", e.getConstraintViolations().stream().findFirst().get().getMessage());
     }
 
     @ExceptionHandler(NotAvailableItemException.class)
     public ResponseEntity<String> exceptionHandle(Exception e) {
-
         log.error("{} : {}", e.getClass().getSimpleName(), e.getMessage());
         return new ResponseEntity<>(e.getClass().getSimpleName() + " : " + e.getMessage(),
                 HttpStatus.BAD_REQUEST);
