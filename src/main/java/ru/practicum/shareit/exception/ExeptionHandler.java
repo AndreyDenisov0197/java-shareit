@@ -28,13 +28,11 @@ public class ExeptionHandler {
         return Map.of("error", e.getConstraintViolations().stream().findFirst().get().getMessage());
     }
 
-    @ExceptionHandler({NotAvailableItemException.class,
-            ConstraintViolationException.class})
+    @ExceptionHandler(NotAvailableItemException.class)
     public ResponseEntity<String> exceptionHandle(Exception e) {
         log.error("{} : {}", e.getClass().getSimpleName(), e.getMessage());
         return new ResponseEntity<>(e.getClass().getSimpleName() + " : " + e.getMessage(),
                 HttpStatus.BAD_REQUEST);
     }
-
 
 }
