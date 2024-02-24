@@ -9,7 +9,7 @@ import java.util.Map;
 
 @Slf4j
 public class ItemRequestStorage {
-    private final Map<Integer, ItemRequest> requestMap = new HashMap<>();
+    private final Map<Long, ItemRequest> requestMap = new HashMap<>();
     private int index;
 
 /*    public ItemRequest createRequest(ItemRequest itemRequest) {
@@ -20,7 +20,7 @@ public class ItemRequestStorage {
         return requestMap.get(id);
     }*/
 
-    public ItemRequest getRequestById(long id) {
+    public ItemRequest getRequestById(Long id) {
         if (!requestMap.containsKey(id)) {
             throw new ObjectNotFoundException("Такого запроса нет!");
         }
