@@ -33,7 +33,7 @@ public class BookingServiceDb implements BookingService {
     private final Sort sort = Sort.by(Sort.Direction.DESC, "start");
 
 
-    public BookingDto bookingRequest (BookingRestDto bookingRestDto, Long booker) {
+    public BookingDto bookingRequest(BookingRestDto bookingRestDto, Long booker) {
         Booking booking = BookingRestMapper.toBooking(bookingRestDto);
         Item item = itemRepository.findById(bookingRestDto.getItemId())
                 .orElseThrow(() -> new NotFoundException("There's no item with id " + bookingRestDto.getItemId()));
