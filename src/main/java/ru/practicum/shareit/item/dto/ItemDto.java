@@ -1,29 +1,34 @@
 package ru.practicum.shareit.item.dto;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+import ru.practicum.shareit.validation.ValidationMarker;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 /**
  * TODO Sprint add-controllers.
  */
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class ItemDto {
-    private Integer id;
-    @NotBlank
-    private String name;
-    @NotBlank
-    private String description;
-    @NotNull
-    private Boolean available;
-    private Integer request;
 
-    public ItemDto(Integer id, String name, String description, Boolean available, Integer request) {
-        this.id = id;
-        this.name = name;
-        this.description = description;
-        this.available = available;
-        this.request = request;
-    }
+    private long id;
+
+    @NotBlank(groups = ValidationMarker.OnCreate.class, message = "Item name field is blank!")
+    @Size(groups = {ValidationMarker.OnCreate.class, ValidationMarker.OnUpdate.class}, max = 128,
+            message = "Creating or updating item name field is bigger than 128 characters!")
+    private String name;
+
+    @NotBlank(groups = ValidationMarker.OnCreate.class, message = "Item description field is blank!")
+    private String description;
+
+    @NotNull(groups = {ValidationMarker.OnCreate.class})
+    private Boolean available;
+
+    private Long request;
 }
