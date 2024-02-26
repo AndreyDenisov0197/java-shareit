@@ -16,10 +16,10 @@ import java.util.Map;
 public class ExeptionHandler {
 
     @ExceptionHandler(NotFoundException.class)
-    public ErorrResponse<String> notFoundHandle(Exception e) {
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ErrorResponse notFoundHandle(Exception e) {
         log.error("{} : {}", e.getClass().getSimpleName(), e.getMessage());
-        return new ErorrResponse<>(e.getClass().getSimpleName() + " : " + e.getMessage(),
-                HttpStatus.NOT_FOUND);
+        return new ErrorResponse(e.getClass().getSimpleName() + " : " + e.getMessage());
     }
 
     @ExceptionHandler(ConstraintViolationException.class)
@@ -32,17 +32,17 @@ public class ExeptionHandler {
     @ExceptionHandler({NotAvailableItemException.class,
             MethodArgumentNotValidException.class,
             ValidationException.class})
-    public ErorrResponse<String> exceptionHandle(Exception e) {
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResponse exceptionHandle(Exception e) {
         log.error("{} : {}", e.getClass().getSimpleName(), e.getMessage());
-        return new ErorrResponse<>(e.getClass().getSimpleName() + " : " + e.getMessage(),
-                HttpStatus.BAD_REQUEST);
+        return new ErrorResponse(e.getClass().getSimpleName() + " : " + e.getMessage());
     }
 
     @ExceptionHandler(Throwable.class)
-    public ErorrResponse<String> throwableHandle(Throwable e) {
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public ErrorResponse throwableHandle(Throwable e) {
         log.error("{} : {}", e.getClass().getSimpleName(), e.getMessage());
-        return new ErorrResponse<>(e.getClass().getSimpleName() + " : " + e.getMessage(),
-                HttpStatus.INTERNAL_SERVER_ERROR);
+        return new ErrorResponse(e.getClass().getSimpleName() + " : " + e.getMessage());
     }
 
 }
