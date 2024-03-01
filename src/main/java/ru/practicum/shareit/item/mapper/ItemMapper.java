@@ -1,17 +1,13 @@
 package ru.practicum.shareit.item.mapper;
 
-import org.springframework.validation.annotation.Validated;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.request.storage.ItemRequestStorage;
 
-import javax.validation.Valid;
-
-@Validated
 public class ItemMapper {
-    private static final ItemRequestStorage requestStorage = new ItemRequestStorage();
+    private static ItemRequestStorage requestStorage;
 
-    public static ItemDto toItemDto(@Valid Item item) {
+    public static ItemDto toItemDto(Item item) {
         return new ItemDto(
                 item.getId(),
                 item.getName(),
@@ -21,10 +17,10 @@ public class ItemMapper {
         );
     }
 
-    public static Item toItem(@Valid ItemDto itemDto, int owner) {
+    public static Item toItem(ItemDto itemDto) {
         return new Item(
-                itemDto.getId(),
-                owner,
+                null,
+                null,
                 itemDto.getName(),
                 itemDto.getDescription(),
                 itemDto.getAvailable(),
