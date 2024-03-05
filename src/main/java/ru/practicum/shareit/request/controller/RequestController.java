@@ -5,21 +5,14 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.request.dto.RequestDto;
 import ru.practicum.shareit.request.dto.RequestWithItemsDto;
-import ru.practicum.shareit.request.model.Request;
 import ru.practicum.shareit.request.service.RequestService;
 import ru.practicum.shareit.validation.ValidationMarker;
 
 import javax.validation.constraints.Min;
 import javax.validation.constraints.Positive;
-import javax.xml.bind.ValidationException;
 import java.util.Collection;
-
-/**
- * TODO Sprint add-item-requests.
- */
 
 @Slf4j
 @RestController

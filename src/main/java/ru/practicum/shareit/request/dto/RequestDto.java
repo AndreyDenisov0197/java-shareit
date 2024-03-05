@@ -9,10 +9,6 @@ import ru.practicum.shareit.validation.ValidationMarker;
 import javax.validation.constraints.NotBlank;
 import java.time.LocalDateTime;
 
-/**
- * TODO Sprint add-item-requests.
- */
-
 @Builder
 @Data
 @AllArgsConstructor

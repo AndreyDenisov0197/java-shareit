@@ -3,10 +3,8 @@ package ru.practicum.shareit.item.storage;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.opentest4j.AssertionFailedError;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.item.model.Comment;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.model.User;
@@ -15,7 +13,7 @@ import ru.practicum.shareit.user.storage.UserRepository;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @DataJpaTest
 class CommentRepositoryTest {
@@ -26,8 +24,6 @@ class CommentRepositoryTest {
     @Autowired
     private ItemRepository itemRepository;
 
-    private User user;
-    private User user2;
     private Item item;
     private Comment comment;
 
@@ -37,13 +33,13 @@ class CommentRepositoryTest {
                 .name("nameUser")
                 .email("email@mail.ru")
                 .build();
-        user = userRepository.save(userToSave);
+        User user = userRepository.save(userToSave);
 
         User userToSave2 = User.builder()
                 .name("nameUser2")
                 .email("email2@mail.ru")
                 .build();
-        user2 = userRepository.save(userToSave);
+        User user2 = userRepository.save(userToSave2);
 
         Item itemToSave = Item.builder()
                 .name("nameItem")
