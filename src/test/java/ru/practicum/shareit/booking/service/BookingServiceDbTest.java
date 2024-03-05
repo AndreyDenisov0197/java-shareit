@@ -480,4 +480,12 @@ class BookingServiceDbTest {
                 BookingStatus.REJECTED, myPageRequest);
         verify(itemRepository).findByOwnerId(user.getId());
     }
+
+
+    @Test
+    void testMyPageRequestGetOffset() {
+        long result = myPageRequest.getOffset();
+
+        assertEquals(from, result);
+    }
 }

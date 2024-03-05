@@ -397,6 +397,5 @@ class BookingRepositoryTest {
                         sortAsc);
 
         assertEquals(booking, result.get());
-
     }
 }

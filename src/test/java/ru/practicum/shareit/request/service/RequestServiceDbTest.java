@@ -7,6 +7,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import ru.practicum.shareit.exception.NotFoundException;
+import ru.practicum.shareit.item.mapper.ItemMapper;
+import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.storage.ItemRepository;
 import ru.practicum.shareit.pageRequest.MyPageRequest;
 import ru.practicum.shareit.request.dto.RequestDto;
@@ -41,6 +43,7 @@ class RequestServiceDbTest {
     private RequestServiceDb requestService;
     private RequestDto requestDto;
     private User user;
+    private Item item;
     private Request request;
     private RequestDto requestUpdate;
     private RequestWithItemsDto requestWithItemsDto;
@@ -65,6 +68,7 @@ class RequestServiceDbTest {
         requestUpdate = RequestDto.builder()
                 .description("text")
                 .build();
+        item = new Item(2L, user, "nameItem", "qwe", true, request);
 
         requestWithItemsDto = RequestWithItemsMapper.toRequestWithItemsDto(request);
         requestWithItemsDto.setItems(List.of());
@@ -137,7 +141,9 @@ class RequestServiceDbTest {
 
     @Test
     void getRequestById() {
+        requestWithItemsDto.setItems(List.of(ItemMapper.toItemDto(item)));
         when(requestRepository.findById(request.getId())).thenReturn(Optional.of(request));
+        when(itemRepository.findByRequestId(request.getId())).thenReturn(List.of(item));
 
         RequestWithItemsDto result = requestService.getRequestById(request.getId(), user.getId());
 
@@ -155,4 +161,6 @@ class RequestServiceDbTest {
 
         verify(requestRepository).findById(request.getId());
     }
+
+
 }
