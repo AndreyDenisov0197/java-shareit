@@ -1,9 +1,10 @@
 package ru.practicum.shareit.item.model;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import ru.practicum.shareit.request.model.ItemRequest;
+import ru.practicum.shareit.request.model.Request;
 import ru.practicum.shareit.user.model.User;
 
 import javax.persistence.*;
@@ -11,6 +12,7 @@ import javax.persistence.*;
 /**
  * TODO Sprint add-controllers.
  */
+@Builder
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -37,5 +39,5 @@ public class Item {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "request_id")
-    private ItemRequest request;
+    private Request request;
 }

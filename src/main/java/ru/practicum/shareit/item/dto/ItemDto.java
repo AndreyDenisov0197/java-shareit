@@ -17,7 +17,7 @@ import javax.validation.constraints.Size;
 @NoArgsConstructor
 public class ItemDto {
 
-    private long id;
+    private Long id;
 
     @NotBlank(groups = ValidationMarker.OnCreate.class, message = "Item name field is blank!")
     @Size(groups = {ValidationMarker.OnCreate.class, ValidationMarker.OnUpdate.class}, max = 128,
@@ -30,5 +30,5 @@ public class ItemDto {
     @NotNull(groups = {ValidationMarker.OnCreate.class})
     private Boolean available;
 
-    private Long request;
+    private Long requestId;
 }

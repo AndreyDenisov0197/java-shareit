@@ -1,8 +1,11 @@
 package ru.practicum.shareit.booking.service;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.dto.BookingRestDto;
 import ru.practicum.shareit.booking.mapper.BookingMapper;
@@ -15,6 +18,7 @@ import ru.practicum.shareit.exception.NotAvailableItemException;
 import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.storage.ItemRepository;
+import ru.practicum.shareit.pageRequest.MyPageRequest;
 import ru.practicum.shareit.user.storage.UserRepository;
 
 import java.time.LocalDateTime;
@@ -22,7 +26,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
-
+@Transactional
 @Service
 @RequiredArgsConstructor
 public class BookingServiceDb implements BookingService {
@@ -30,9 +34,11 @@ public class BookingServiceDb implements BookingService {
     private final BookingRepository bookingRepository;
     private final ItemRepository itemRepository;
     private final UserRepository userRepository;
-    private final Sort sort = Sort.by(Sort.Direction.DESC, "start");
+    protected static final Sort SORT = Sort.by(Sort.Direction.DESC, "start");
+    protected static final Sort SORT_ASC = Sort.by(Sort.Direction.ASC, "start");
 
 
+    @Override
     public BookingDto bookingRequest(BookingRestDto bookingRestDto, Long booker) {
         Booking booking = BookingRestMapper.toBooking(bookingRestDto);
         Item item = itemRepository.findById(bookingRestDto.getItemId())
@@ -50,6 +56,7 @@ public class BookingServiceDb implements BookingService {
         return BookingMapper.toBookingDto(bookingRepository.save(booking));
     }
 
+    @Override
     public BookingDto bookingConfirmation(Long bookingId, Long userId, boolean status) {
         Booking booking = bookingRepository.findById(bookingId)
                 .orElseThrow(() -> new NotFoundException("Нет бронирования с ID " + bookingId));
@@ -63,13 +70,14 @@ public class BookingServiceDb implements BookingService {
         }
 
         if (status) {
-            booking.setStatus(BookingStatus.APPROVED);
+            booking.setStatus(BookingStatus.APPROVED); // есть возможность добавить изменение статуса для Item
         } else {
             booking.setStatus(BookingStatus.REJECTED);
         }
         return BookingMapper.toBookingDto(bookingRepository.save(booking));
     }
 
+    @Override
     public BookingDto getBooking(Long bookingId, Long userId) {
         BookingDto booking = BookingMapper.toBookingDto(bookingRepository.findById(bookingId)
                 .orElseThrow(() -> new NotFoundException("There's no booking with id " + bookingId)));
@@ -83,39 +91,44 @@ public class BookingServiceDb implements BookingService {
         return booking;
     }
 
-    public Collection<BookingDto> getAllBookingForBooker(BookingState state, Long userId) {
+    @Override
+    public Collection<BookingDto> getAllBookingForBooker(BookingState state, Long userId, int from, int size) {
         userRepository.checkUserById(userId);
-
+        MyPageRequest pageRequest = new MyPageRequest(from, size, SORT);
         switch (state) {
             case ALL:
-                return toBookingDtoList(bookingRepository.findByBookerId(userId, sort));
+                return toBookingDtoList(bookingRepository.findByBookerId(userId, pageRequest));
 
             case PAST:
                 return toBookingDtoList(bookingRepository.findByBookerIdAndEndIsBefore(userId,
-                        LocalDateTime.now(), sort));
+                        LocalDateTime.now(), pageRequest));
 
             case CURRENT:
                 return toBookingDtoList(bookingRepository.findByBookerIdAndEndIsAfterAndStartIsBefore(userId,
-                        LocalDateTime.now(), LocalDateTime.now(), sort));
+                        LocalDateTime.now(), LocalDateTime.now(), new MyPageRequest(from, size, SORT_ASC)));
 
             case WAITING:
                 return toBookingDtoList(bookingRepository.findByBookerIdAndStatusIs(userId,
-                        BookingStatus.WAITING, sort));
+                        BookingStatus.WAITING, pageRequest));
 
             case FUTURE:
                 return toBookingDtoList(bookingRepository.findByBookerIdAndStartIsAfter(userId,
-                        LocalDateTime.now(), sort));
+                        LocalDateTime.now(), pageRequest));
 
             case REJECTED:
                 return toBookingDtoList(bookingRepository.findByBookerIdAndStatusIs(userId,
-                        BookingStatus.REJECTED, sort));
+                        BookingStatus.REJECTED, pageRequest));
 
             default:
                 return List.of();
         }
     }
 
-    public Collection<BookingDto> getAllBookingForUserItems(BookingState state, Long userId) {
+    @Override
+    public Collection<BookingDto> getAllBookingForUserItems(BookingState state, Long userId, int from, int size) {
+        MyPageRequest pageRequest = new MyPageRequest(from, size, SORT);
+
+
         List<Item> items = itemRepository.findByOwnerId(userId);
         if (items.isEmpty()) {
             throw new NotFoundException("There's no items belong to user " + userId);
@@ -128,27 +141,27 @@ public class BookingServiceDb implements BookingService {
 
         switch (state) {
             case ALL:
-                return toBookingDtoList(bookingRepository.findByItemIdIn(itemsId, sort));
+                return toBookingDtoList(bookingRepository.findByItemIdIn(itemsId, pageRequest));
 
             case PAST:
                 return toBookingDtoList(bookingRepository.findByItemIdInAndEndIsBefore(itemsId,
-                        LocalDateTime.now(), sort));
+                        LocalDateTime.now(), pageRequest));
 
             case CURRENT:
                 return toBookingDtoList(bookingRepository.findByItemIdInAndEndIsAfterAndStartIsBefore(itemsId,
-                        LocalDateTime.now(), LocalDateTime.now(), sort));
+                        LocalDateTime.now(), LocalDateTime.now(), pageRequest));
 
             case WAITING:
                 return toBookingDtoList(bookingRepository.findByItemIdInAndStatusIs(itemsId,
-                        BookingStatus.WAITING, sort));
+                        BookingStatus.WAITING, pageRequest));
 
             case FUTURE:
                 return toBookingDtoList(bookingRepository.findByItemIdInAndStartIsAfter(itemsId,
-                        LocalDateTime.now(), sort));
+                        LocalDateTime.now(), pageRequest));
 
             case REJECTED:
                 return toBookingDtoList(bookingRepository.findByItemIdInAndStatusIs(itemsId,
-                        BookingStatus.REJECTED, sort));
+                        BookingStatus.REJECTED, pageRequest));
 
             default:
                 return List.of();
