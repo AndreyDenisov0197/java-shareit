@@ -134,7 +134,7 @@ class UserServiceDbTest {
         when(userRepository.findById(id)).thenReturn(Optional.empty());
 
         assertThrows(NotFoundException.class,
-                () ->userService.updateUser(id, userDto));
+                () -> userService.updateUser(id, userDto));
     }
 
     @Test

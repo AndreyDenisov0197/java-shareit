@@ -37,6 +37,6 @@ class UserRepositoryTest {
 
     @Test
     void checkUserById_whenUserIdNotFound() {
-        assertThrows(NotFoundException.class, ()-> userRepository.checkUserById(35L));
+        assertThrows(NotFoundException.class, () -> userRepository.checkUserById(35L));
     }
 }

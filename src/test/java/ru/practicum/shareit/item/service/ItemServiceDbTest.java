@@ -170,7 +170,7 @@ class ItemServiceDbTest {
         when(itemRepository.findById(itemId)).thenReturn(Optional.empty());
 
         assertThrows(NotFoundException.class,
-                () ->itemService.updateItem(userId, itemToUpdate, itemId));
+                () -> itemService.updateItem(userId, itemToUpdate, itemId));
 
         verify(itemRepository, never()).save(any(Item.class));
         verify(itemRepository).findById(anyLong());
@@ -256,8 +256,8 @@ class ItemServiceDbTest {
     void createComments_whenUserNotBooking() {
         when(bookingRepository.existsByBookerIdAndItemIdAndEndIsBeforeAndStatusIs(anyLong(), anyLong(), any(LocalDateTime.class), any(BookingStatus.class))).thenReturn(false);
 
-        assertThrows(NotAvailableItemException.class, () -> itemService.createComments(item.getId(), user.getId()
-                , CommentMapper.toCommentDto(comment)));
+        assertThrows(NotAvailableItemException.class, () -> itemService.createComments(item.getId(), user.getId(),
+                CommentMapper.toCommentDto(comment)));
     }
 
     @Test
@@ -266,8 +266,8 @@ class ItemServiceDbTest {
         when(bookingRepository.existsByBookerIdAndItemIdAndEndIsBeforeAndStatusIs(anyLong(),
                 anyLong(), any(LocalDateTime.class), any(BookingStatus.class))).thenReturn(true);
 
-        assertThrows(NotFoundException.class, () -> itemService.createComments(item.getId(), user.getId()
-                , CommentMapper.toCommentDto(comment)));
+        assertThrows(NotFoundException.class, () -> itemService.createComments(item.getId(), user.getId(),
+                CommentMapper.toCommentDto(comment)));
     }
 
     @Test
@@ -277,7 +277,7 @@ class ItemServiceDbTest {
         when(bookingRepository.existsByBookerIdAndItemIdAndEndIsBeforeAndStatusIs(anyLong(),
                 anyLong(), any(LocalDateTime.class), any(BookingStatus.class))).thenReturn(true);
 
-        assertThrows(NotFoundException.class, () -> itemService.createComments(item.getId(), user.getId()
-                , CommentMapper.toCommentDto(comment)));
+        assertThrows(NotFoundException.class, () -> itemService.createComments(item.getId(), user.getId(),
+                CommentMapper.toCommentDto(comment)));
     }
 }

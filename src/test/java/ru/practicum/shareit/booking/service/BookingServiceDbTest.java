@@ -123,7 +123,7 @@ class BookingServiceDbTest {
         when(userRepository.findById(user2.getId())).thenReturn(Optional.empty());
 
         assertThrows(NotFoundException.class,
-                ()-> service.bookingRequest(bookingRestDto, user2.getId()));
+                () -> service.bookingRequest(bookingRestDto, user2.getId()));
 
         verify(itemRepository).findById(anyLong());
         verify(userRepository).findById(user2.getId());
@@ -136,7 +136,7 @@ class BookingServiceDbTest {
         when(itemRepository.findById(bookingRestDto.getItemId())).thenReturn(Optional.of(item));
 
         assertThrows(NotAvailableItemException.class,
-                ()-> service.bookingRequest(bookingRestDto, user2.getId()));
+                () -> service.bookingRequest(bookingRestDto, user2.getId()));
 
         verify(itemRepository).findById(anyLong());
         verify(userRepository, never()).findById(anyLong());
@@ -148,7 +148,7 @@ class BookingServiceDbTest {
         when(itemRepository.findById(bookingRestDto.getItemId())).thenReturn(Optional.of(item));
 
         assertThrows(NotFoundException.class,
-                ()-> service.bookingRequest(bookingRestDto, user.getId()));
+                () -> service.bookingRequest(bookingRestDto, user.getId()));
 
         verify(itemRepository).findById(anyLong());
         verify(userRepository, never()).findById(anyLong());
@@ -162,7 +162,7 @@ class BookingServiceDbTest {
         when(itemRepository.findById(bookingRestDto.getItemId())).thenReturn(Optional.empty());
 
         assertThrows(NotFoundException.class,
-                ()-> service.bookingRequest(bookingRestDto, user2.getId()));
+                () -> service.bookingRequest(bookingRestDto, user2.getId()));
 
         verify(itemRepository).findById(anyLong());
         verify(userRepository, never()).findById(anyLong());
