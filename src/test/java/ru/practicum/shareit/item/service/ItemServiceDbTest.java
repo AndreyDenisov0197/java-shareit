@@ -179,7 +179,7 @@ class ItemServiceDbTest {
     @Test
     void getItemById() {
         long itemId = item.getId();
-        long userId = 3L;
+        long userId = 1L;
         when(itemRepository.findById(itemId)).thenReturn(Optional.of(item));
         when(commentRepository.findByItemId(itemId)).thenReturn(List.of());
 

@@ -8,8 +8,10 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.dto.BookingRestDto;
+import ru.practicum.shareit.booking.dto.LastNextBookingDto;
 import ru.practicum.shareit.booking.mapper.BookingMapper;
 import ru.practicum.shareit.booking.mapper.BookingRestMapper;
+import ru.practicum.shareit.booking.mapper.LastNextBookingMapper;
 import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.booking.model.BookingState;
 import ru.practicum.shareit.booking.model.BookingStatus;
@@ -289,7 +291,7 @@ class BookingServiceDbTest {
     @Test
     void getBooking_whenUserDoNotOwnerAndBooker() {
         when(bookingRepository.findById(booking.getId())).thenReturn(Optional.of(booking));
-        when(itemRepository.findById(booking.getItem().getId())).thenReturn(Optional.empty());
+        when(itemRepository.findById(booking.getItem().getId())).thenReturn(Optional.of(item));
 
         assertThrows(NotFoundException.class,
                 () -> service.getBooking(booking.getId(), 35L));
@@ -485,7 +487,12 @@ class BookingServiceDbTest {
     @Test
     void testMyPageRequestGetOffset() {
         long result = myPageRequest.getOffset();
-
         assertEquals(from, result);
+    }
+
+    @Test
+    void mapBookingToLastNextDto() {
+        assertEquals(new LastNextBookingDto(3L, 2L),
+                LastNextBookingMapper.mapBookingToLastNextDto(booking));
     }
 }
