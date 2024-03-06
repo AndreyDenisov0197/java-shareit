@@ -19,6 +19,7 @@ class BookingMapperTest {
     private Booking booking;
     private BookingRestDto bookingRestDto;
     private BookingDto bookingDto;
+
     @BeforeEach
     public void beforeEach() {
         LocalDateTime date = LocalDateTime.now();
