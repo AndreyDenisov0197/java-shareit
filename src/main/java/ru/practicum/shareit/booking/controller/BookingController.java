@@ -16,10 +16,6 @@ import javax.validation.constraints.Min;
 import javax.validation.constraints.Positive;
 import java.util.Collection;
 
-/**
- * TODO Sprint add-bookings.
- */
-
 @Slf4j
 @RestController
 @RequestMapping(path = "/bookings")

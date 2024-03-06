@@ -91,6 +91,78 @@ class BookingControllerIT {
 
     @SneakyThrows
     @Test
+    void bookingRequest_whenBookingNotEnd() {
+        long booker = 3L;
+        bookingRestDto.setEnd(null);
+        when(service.bookingRequest(bookingRestDto, booker)).thenReturn(bookingDto);
+
+        mvc.perform(post("/bookings")
+                        .contentType(json)
+                        .header(HEADER, booker)
+                        .content(mapper.writeValueAsString(bookingRestDto)))
+                .andExpect(status().isBadRequest());
+    }
+
+    @SneakyThrows
+    @Test
+    void bookingRequest_whenBookingStartBefore() {
+        long booker = 3L;
+        bookingRestDto.setStart(LocalDateTime.now().minusDays(2));
+        when(service.bookingRequest(bookingRestDto, booker)).thenReturn(bookingDto);
+
+        mvc.perform(post("/bookings")
+                        .contentType(json)
+                        .header(HEADER, booker)
+                        .content(mapper.writeValueAsString(bookingRestDto)))
+                .andExpect(status().isBadRequest());
+    }
+
+    @SneakyThrows
+    @Test
+    void bookingRequest_whenBookingEndBefore() {
+        long booker = 3L;
+        bookingRestDto.setEnd(LocalDateTime.now().minusDays(2));
+        when(service.bookingRequest(bookingRestDto, booker)).thenReturn(bookingDto);
+
+        mvc.perform(post("/bookings")
+                        .contentType(json)
+                        .header(HEADER, booker)
+                        .content(mapper.writeValueAsString(bookingRestDto)))
+                .andExpect(status().isBadRequest());
+    }
+
+    @SneakyThrows
+    @Test
+    void bookingRequest_whenBookingStartAfterEnd() {
+        long booker = 3L;
+        bookingRestDto.setEnd(LocalDateTime.now().plusDays(1));
+        when(service.bookingRequest(bookingRestDto, booker)).thenReturn(bookingDto);
+
+        mvc.perform(post("/bookings")
+                        .contentType(json)
+                        .header(HEADER, booker)
+                        .content(mapper.writeValueAsString(bookingRestDto)))
+                .andExpect(status().isBadRequest());
+    }
+
+    @SneakyThrows
+    @Test
+    void bookingRequest_whenBookingStartEqualsEnd() {
+        long booker = 3L;
+        LocalDateTime date = LocalDateTime.now().plusDays(2);
+        bookingRestDto.setStart(date);
+        bookingRestDto.setEnd(date);
+        when(service.bookingRequest(bookingRestDto, booker)).thenReturn(bookingDto);
+
+        mvc.perform(post("/bookings")
+                        .contentType(json)
+                        .header(HEADER, booker)
+                        .content(mapper.writeValueAsString(bookingRestDto)))
+                .andExpect(status().isBadRequest());
+    }
+
+    @SneakyThrows
+    @Test
     void bookingConfirmation() {
         long bookingId = 2L;
         long userId = 3L;

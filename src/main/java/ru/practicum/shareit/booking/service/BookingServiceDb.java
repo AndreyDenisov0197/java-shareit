@@ -93,33 +93,40 @@ public class BookingServiceDb implements BookingService {
     public Collection<BookingDto> getAllBookingForBooker(BookingState state, Long userId, int from, int size) {
         userRepository.checkUserById(userId);
         MyPageRequest pageRequest = new MyPageRequest(from, size, SORT);
+        Collection<BookingDto> bookingDtos = List.of();
+
         switch (state) {
             case ALL:
-                return toBookingDtoList(bookingRepository.findByBookerId(userId, pageRequest));
+                bookingDtos = toBookingDtoList(bookingRepository.findByBookerId(userId, pageRequest));
+                break;
 
             case PAST:
-                return toBookingDtoList(bookingRepository.findByBookerIdAndEndIsBefore(userId,
+                bookingDtos = toBookingDtoList(bookingRepository.findByBookerIdAndEndIsBefore(userId,
                         LocalDateTime.now(), pageRequest));
+                break;
 
             case CURRENT:
-                return toBookingDtoList(bookingRepository.findByBookerIdAndEndIsAfterAndStartIsBefore(userId,
+                bookingDtos = toBookingDtoList(bookingRepository.findByBookerIdAndEndIsAfterAndStartIsBefore(userId,
                         LocalDateTime.now(), LocalDateTime.now(), new MyPageRequest(from, size, SORT_ASC)));
+                break;
 
             case WAITING:
-                return toBookingDtoList(bookingRepository.findByBookerIdAndStatusIs(userId,
+                bookingDtos =  toBookingDtoList(bookingRepository.findByBookerIdAndStatusIs(userId,
                         BookingStatus.WAITING, pageRequest));
+                break;
 
             case FUTURE:
-                return toBookingDtoList(bookingRepository.findByBookerIdAndStartIsAfter(userId,
+                bookingDtos =  toBookingDtoList(bookingRepository.findByBookerIdAndStartIsAfter(userId,
                         LocalDateTime.now(), pageRequest));
+                break;
 
             case REJECTED:
-                return toBookingDtoList(bookingRepository.findByBookerIdAndStatusIs(userId,
+                bookingDtos = toBookingDtoList(bookingRepository.findByBookerIdAndStatusIs(userId,
                         BookingStatus.REJECTED, pageRequest));
-
-            default:
-                return List.of();
+                break;
         }
+
+        return bookingDtos;
     }
 
     @Override
@@ -136,34 +143,40 @@ public class BookingServiceDb implements BookingService {
                 .map(Item::getId)
                 .collect(Collectors.toList());
 
+        Collection<BookingDto> bookingDtos = List.of();
 
         switch (state) {
             case ALL:
-                return toBookingDtoList(bookingRepository.findByItemIdIn(itemsId, pageRequest));
+                bookingDtos = toBookingDtoList(bookingRepository.findByItemIdIn(itemsId, pageRequest));
+                break;
 
             case PAST:
-                return toBookingDtoList(bookingRepository.findByItemIdInAndEndIsBefore(itemsId,
+                bookingDtos = toBookingDtoList(bookingRepository.findByItemIdInAndEndIsBefore(itemsId,
                         LocalDateTime.now(), pageRequest));
+                break;
 
             case CURRENT:
-                return toBookingDtoList(bookingRepository.findByItemIdInAndEndIsAfterAndStartIsBefore(itemsId,
+                bookingDtos = toBookingDtoList(bookingRepository.findByItemIdInAndEndIsAfterAndStartIsBefore(itemsId,
                         LocalDateTime.now(), LocalDateTime.now(), pageRequest));
+                break;
 
             case WAITING:
-                return toBookingDtoList(bookingRepository.findByItemIdInAndStatusIs(itemsId,
-                        BookingStatus.WAITING, pageRequest));
+                bookingDtos = toBookingDtoList(bookingRepository.findByItemIdInAndStatusIs(
+                        itemsId, BookingStatus.WAITING, pageRequest));
+                break;
 
             case FUTURE:
-                return toBookingDtoList(bookingRepository.findByItemIdInAndStartIsAfter(itemsId,
+                bookingDtos = toBookingDtoList(bookingRepository.findByItemIdInAndStartIsAfter(itemsId,
                         LocalDateTime.now(), pageRequest));
+                break;
 
             case REJECTED:
-                return toBookingDtoList(bookingRepository.findByItemIdInAndStatusIs(itemsId,
+                bookingDtos = toBookingDtoList(bookingRepository.findByItemIdInAndStatusIs(itemsId,
                         BookingStatus.REJECTED, pageRequest));
-
-            default:
-                return List.of();
+                break;
         }
+
+        return bookingDtos;
     }
 
     private Collection<BookingDto> toBookingDtoList(Collection<Booking> bookings) {
