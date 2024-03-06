@@ -6,6 +6,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
 import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.dto.BookingRestDto;
@@ -15,11 +16,15 @@ import ru.practicum.shareit.booking.service.BookingService;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.user.model.User;
 
+import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 

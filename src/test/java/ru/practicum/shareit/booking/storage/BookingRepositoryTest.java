@@ -1,5 +1,6 @@
 package ru.practicum.shareit.booking.storage;
 
+import lombok.SneakyThrows;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -9,17 +10,24 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.booking.model.BookingStatus;
+import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.storage.ItemRepository;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.storage.UserRepository;
 
+import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyList;
+import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @DataJpaTest
 class BookingRepositoryTest {
