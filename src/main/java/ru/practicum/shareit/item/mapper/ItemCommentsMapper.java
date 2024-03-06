@@ -6,7 +6,6 @@ import ru.practicum.shareit.item.model.Comment;
 public class ItemCommentsMapper {
 
     public static ItemCommentsDto toItemComments(Comment comment) {
-
         return new ItemCommentsDto(
                 comment.getId(),
                 comment.getText(),
