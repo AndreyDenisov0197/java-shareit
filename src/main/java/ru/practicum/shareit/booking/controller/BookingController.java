@@ -53,8 +53,8 @@ public class BookingController {
     ResponseEntity<Collection<BookingDto>> getAllBookingForBooker(@RequestParam(defaultValue = "ALL")
                                                   @BookingStateValidation String state,
                                                   @RequestHeader(HEADER) Long userId,
-                                                  @RequestParam(required = false, defaultValue = "0") @Min(0) int from,
-                                                  @RequestParam(required = false, defaultValue = "10") @Positive int size) {
+                                                  @RequestParam(defaultValue = "0") @Min(0) int from,
+                                                  @RequestParam(defaultValue = "10") @Positive int size) {
         log.info("GET ?state={}, {}", state, userId);
         return ResponseEntity.ok(bookingService.getAllBookingForBooker(BookingState.valueOf(state), userId, from, size));
     }
@@ -63,8 +63,8 @@ public class BookingController {
     ResponseEntity<Collection<BookingDto>> getAllBookingForUserItems(@RequestParam(defaultValue = "ALL")
                                                      @BookingStateValidation String state,
                                                      @RequestHeader(HEADER) Long userId,
-                                                     @RequestParam(required = false, defaultValue = "0") @Min(0) int from,
-                                                     @RequestParam(required = false, defaultValue = "10") @Positive int size) {
+                                                     @RequestParam(defaultValue = "0") @Min(0) int from,
+                                                     @RequestParam(defaultValue = "10") @Positive int size) {
         log.info("GET /owner?state={}, {}", state, userId);
         return ResponseEntity.ok(bookingService.getAllBookingForUserItems(BookingState.valueOf(state), userId, from, size));
     }

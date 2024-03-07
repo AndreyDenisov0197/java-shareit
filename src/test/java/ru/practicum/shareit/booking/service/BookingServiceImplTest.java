@@ -6,6 +6,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.PageRequest;
 import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.dto.BookingRestDto;
 import ru.practicum.shareit.booking.dto.LastNextBookingDto;
@@ -20,7 +21,6 @@ import ru.practicum.shareit.exception.NotAvailableItemException;
 import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.storage.ItemRepository;
-import ru.practicum.shareit.pageRequest.MyPageRequest;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.storage.UserRepository;
 
@@ -33,10 +33,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
-import static ru.practicum.shareit.booking.service.BookingServiceDb.SORT;
+import static ru.practicum.shareit.booking.service.BookingServiceImpl.SORT;
 
 @ExtendWith(MockitoExtension.class)
-class BookingServiceDbTest {
+class BookingServiceImplTest {
     @Mock
     private BookingRepository bookingRepository;
     @Mock
@@ -45,7 +45,7 @@ class BookingServiceDbTest {
     private UserRepository userRepository;
 
     @InjectMocks
-    private BookingServiceDb service;
+    private BookingServiceImpl service;
 
     private User user;
     private User user2;
@@ -55,7 +55,7 @@ class BookingServiceDbTest {
     private BookingDto bookingDto;
     private int from = 0;
     private int size = 20;
-    private MyPageRequest myPageRequest;
+    private PageRequest pageRequest;
     private List<Long> itemsId;
 
     @BeforeEach
@@ -96,7 +96,7 @@ class BookingServiceDbTest {
                 .build();
 
         bookingDto = BookingMapper.toBookingDto(booking);
-        myPageRequest = new MyPageRequest(from, size, SORT);
+        pageRequest = PageRequest.of(from > 0 ? from / size : 0, size, SORT);
         itemsId = List.of(item.getId());
 
     }
@@ -302,71 +302,71 @@ class BookingServiceDbTest {
 
     @Test
     void getAllBookingForBooker_whenStateAll() {
-        when(bookingRepository.findByBookerId(user2.getId(), myPageRequest)).thenReturn(List.of(booking));
+        when(bookingRepository.findByBookerId(user2.getId(), pageRequest)).thenReturn(List.of(booking));
 
         Collection<BookingDto> result = service.getAllBookingForBooker(BookingState.ALL, user2.getId(), from, size);
 
         assertEquals(List.of(bookingDto), result);
         assertEquals(List.of(bookingDto).size(), result.size());
-        verify(bookingRepository).findByBookerId(user2.getId(), myPageRequest);
+        verify(bookingRepository).findByBookerId(user2.getId(), pageRequest);
     }
 
     @Test
     void getAllBookingForBooker_whenStatePast() {
         when(bookingRepository.findByBookerIdAndEndIsBefore(anyLong(),
-                any(LocalDateTime.class), any(MyPageRequest.class))).thenReturn(List.of(booking));
+                any(LocalDateTime.class), any(PageRequest.class))).thenReturn(List.of(booking));
 
         Collection<BookingDto> result = service.getAllBookingForBooker(BookingState.PAST, user2.getId(), from, size);
 
         assertEquals(List.of(bookingDto), result);
         assertEquals(List.of(bookingDto).size(), result.size());
         verify(bookingRepository).findByBookerIdAndEndIsBefore(anyLong(),
-                any(LocalDateTime.class), any(MyPageRequest.class));
+                any(LocalDateTime.class), any(PageRequest.class));
     }
 
     @Test
     void getAllBookingForBooker_whenStateCurrent() {
         when(bookingRepository.findByBookerIdAndEndIsAfterAndStartIsBefore(anyLong(),
-                any(LocalDateTime.class), any(LocalDateTime.class), any(MyPageRequest.class))).thenReturn(List.of(booking));
+                any(LocalDateTime.class), any(LocalDateTime.class), any(PageRequest.class))).thenReturn(List.of(booking));
 
         Collection<BookingDto> result = service.getAllBookingForBooker(BookingState.CURRENT, user2.getId(), from, size);
 
         assertEquals(List.of(bookingDto), result);
         assertEquals(List.of(bookingDto).size(), result.size());
         verify(bookingRepository).findByBookerIdAndEndIsAfterAndStartIsBefore(anyLong(),
-                any(LocalDateTime.class), any(LocalDateTime.class), any(MyPageRequest.class));
+                any(LocalDateTime.class), any(LocalDateTime.class), any(PageRequest.class));
     }
 
     @Test
     void getAllBookingForBooker_whenStateWaiting() {
         when(bookingRepository.findByBookerIdAndStatusIs(user2.getId(), BookingStatus.WAITING,
-                myPageRequest)).thenReturn(List.of(booking));
+                pageRequest)).thenReturn(List.of(booking));
 
         Collection<BookingDto> result = service.getAllBookingForBooker(BookingState.WAITING, user2.getId(), from, size);
 
         assertEquals(List.of(bookingDto), result);
         assertEquals(List.of(bookingDto).size(), result.size());
         verify(bookingRepository).findByBookerIdAndStatusIs(user2.getId(), BookingStatus.WAITING,
-                myPageRequest);
+                pageRequest);
     }
 
     @Test
     void getAllBookingForBooker_whenStateFuture() {
         when(bookingRepository.findByBookerIdAndStartIsAfter(anyLong(),
-                any(LocalDateTime.class), any(MyPageRequest.class))).thenReturn(List.of(booking));
+                any(LocalDateTime.class), any(PageRequest.class))).thenReturn(List.of(booking));
 
         Collection<BookingDto> result = service.getAllBookingForBooker(BookingState.FUTURE, user2.getId(), from, size);
 
         assertEquals(List.of(bookingDto), result);
         assertEquals(List.of(bookingDto).size(), result.size());
         verify(bookingRepository).findByBookerIdAndStartIsAfter(anyLong(),
-                any(LocalDateTime.class), any(MyPageRequest.class));
+                any(LocalDateTime.class), any(PageRequest.class));
     }
 
     @Test
     void getAllBookingForBooker_whenStateRejected() {
         when(bookingRepository.findByBookerIdAndStatusIs(user2.getId(),
-                BookingStatus.REJECTED, myPageRequest)).thenReturn(List.of(booking));
+                BookingStatus.REJECTED, pageRequest)).thenReturn(List.of(booking));
 
         Collection<BookingDto> result =
                 service.getAllBookingForBooker(BookingState.REJECTED, user2.getId(), from, size);
@@ -374,21 +374,21 @@ class BookingServiceDbTest {
         assertEquals(List.of(bookingDto), result);
         assertEquals(List.of(bookingDto).size(), result.size());
         verify(bookingRepository).findByBookerIdAndStatusIs(user2.getId(),
-                BookingStatus.REJECTED, myPageRequest);
+                BookingStatus.REJECTED, pageRequest);
     }
 
     @Test
     void getAllBookingForUserItems_whenStateAll() {
         List<Long> itemsId = List.of(item.getId());
         when(itemRepository.findByOwnerId(user.getId())).thenReturn(List.of(item));
-        when(bookingRepository.findByItemIdIn(itemsId, myPageRequest)).thenReturn(List.of(booking));
+        when(bookingRepository.findByItemIdIn(itemsId, pageRequest)).thenReturn(List.of(booking));
 
         Collection<BookingDto> result =
                 service.getAllBookingForUserItems(BookingState.ALL, user.getId(), from, size);
 
         assertEquals(List.of(bookingDto), result);
         assertEquals(List.of(bookingDto).size(), result.size());
-        verify(bookingRepository).findByItemIdIn(itemsId, myPageRequest);
+        verify(bookingRepository).findByItemIdIn(itemsId, pageRequest);
         verify(itemRepository).findByOwnerId(user.getId());
     }
 
@@ -399,7 +399,7 @@ class BookingServiceDbTest {
         assertThrows(NotFoundException.class,
                 () -> service.getAllBookingForUserItems(BookingState.ALL, user.getId(), from, size));
 
-        verify(bookingRepository, never()).findByItemIdIn(itemsId, myPageRequest);
+        verify(bookingRepository, never()).findByItemIdIn(itemsId, pageRequest);
         verify(itemRepository).findByOwnerId(user.getId());
     }
 
@@ -407,7 +407,7 @@ class BookingServiceDbTest {
     void getAllBookingForUserItems_whenStatePast() {
         when(itemRepository.findByOwnerId(user.getId())).thenReturn(List.of(item));
         when(bookingRepository.findByItemIdInAndEndIsBefore(anyList(),
-                any(LocalDateTime.class), any(MyPageRequest.class))).thenReturn(List.of(booking));
+                any(LocalDateTime.class), any(PageRequest.class))).thenReturn(List.of(booking));
 
         Collection<BookingDto> result =
                 service.getAllBookingForUserItems(BookingState.PAST, user.getId(), from, size);
@@ -415,7 +415,7 @@ class BookingServiceDbTest {
         assertEquals(List.of(bookingDto), result);
         assertEquals(List.of(bookingDto).size(), result.size());
         verify(bookingRepository).findByItemIdInAndEndIsBefore(anyList(),
-                any(LocalDateTime.class), any(MyPageRequest.class));
+                any(LocalDateTime.class), any(PageRequest.class));
         verify(itemRepository).findByOwnerId(user.getId());
     }
 
@@ -423,7 +423,7 @@ class BookingServiceDbTest {
     void getAllBookingForUserItems_whenStateCurrent() {
         when(itemRepository.findByOwnerId(user.getId())).thenReturn(List.of(item));
         when(bookingRepository.findByItemIdInAndEndIsAfterAndStartIsBefore(anyList(),
-                any(LocalDateTime.class), any(LocalDateTime.class), any(MyPageRequest.class))).thenReturn(List.of(booking));
+                any(LocalDateTime.class), any(LocalDateTime.class), any(PageRequest.class))).thenReturn(List.of(booking));
 
         Collection<BookingDto> result =
                 service.getAllBookingForUserItems(BookingState.CURRENT, user.getId(), from, size);
@@ -431,7 +431,7 @@ class BookingServiceDbTest {
         assertEquals(List.of(bookingDto), result);
         assertEquals(List.of(bookingDto).size(), result.size());
         verify(bookingRepository).findByItemIdInAndEndIsAfterAndStartIsBefore(anyList(),
-                any(LocalDateTime.class), any(LocalDateTime.class), any(MyPageRequest.class));
+                any(LocalDateTime.class), any(LocalDateTime.class), any(PageRequest.class));
         verify(itemRepository).findByOwnerId(user.getId());
     }
 
@@ -439,7 +439,7 @@ class BookingServiceDbTest {
     void getAllBookingForUserItems_whenStateWaiting() {
         when(itemRepository.findByOwnerId(user.getId())).thenReturn(List.of(item));
         when(bookingRepository.findByItemIdInAndStatusIs(itemsId,
-                BookingStatus.WAITING, myPageRequest)).thenReturn(List.of(booking));
+                BookingStatus.WAITING, pageRequest)).thenReturn(List.of(booking));
 
         Collection<BookingDto> result =
                 service.getAllBookingForUserItems(BookingState.WAITING, user.getId(), from, size);
@@ -447,7 +447,7 @@ class BookingServiceDbTest {
         assertEquals(List.of(bookingDto), result);
         assertEquals(List.of(bookingDto).size(), result.size());
         verify(bookingRepository).findByItemIdInAndStatusIs(itemsId,
-                BookingStatus.WAITING, myPageRequest);
+                BookingStatus.WAITING, pageRequest);
         verify(itemRepository).findByOwnerId(user.getId());
     }
 
@@ -455,7 +455,7 @@ class BookingServiceDbTest {
     void getAllBookingForUserItems_whenStateFuture() {
         when(itemRepository.findByOwnerId(user.getId())).thenReturn(List.of(item));
         when(bookingRepository.findByItemIdInAndStartIsAfter(anyList(),
-                any(LocalDateTime.class), any(MyPageRequest.class))).thenReturn(List.of(booking));
+                any(LocalDateTime.class), any(PageRequest.class))).thenReturn(List.of(booking));
 
         Collection<BookingDto> result =
                 service.getAllBookingForUserItems(BookingState.FUTURE, user.getId(), from, size);
@@ -463,7 +463,7 @@ class BookingServiceDbTest {
         assertEquals(List.of(bookingDto), result);
         assertEquals(List.of(bookingDto).size(), result.size());
         verify(bookingRepository).findByItemIdInAndStartIsAfter(anyList(),
-                any(LocalDateTime.class), any(MyPageRequest.class));
+                any(LocalDateTime.class), any(PageRequest.class));
         verify(itemRepository).findByOwnerId(user.getId());
     }
 
@@ -471,7 +471,7 @@ class BookingServiceDbTest {
     void getAllBookingForUserItems_whenStateRejected() {
         when(itemRepository.findByOwnerId(user.getId())).thenReturn(List.of(item));
         when(bookingRepository.findByItemIdInAndStatusIs(itemsId,
-                BookingStatus.REJECTED, myPageRequest)).thenReturn(List.of(booking));
+                BookingStatus.REJECTED, pageRequest)).thenReturn(List.of(booking));
 
         Collection<BookingDto> result =
                 service.getAllBookingForUserItems(BookingState.REJECTED, user.getId(), from, size);
@@ -479,14 +479,14 @@ class BookingServiceDbTest {
         assertEquals(List.of(bookingDto), result);
         assertEquals(List.of(bookingDto).size(), result.size());
         verify(bookingRepository).findByItemIdInAndStatusIs(itemsId,
-                BookingStatus.REJECTED, myPageRequest);
+                BookingStatus.REJECTED, pageRequest);
         verify(itemRepository).findByOwnerId(user.getId());
     }
 
 
     @Test
     void testMyPageRequestGetOffset() {
-        long result = myPageRequest.getOffset();
+        long result = pageRequest.getOffset();
         assertEquals(from, result);
     }
 

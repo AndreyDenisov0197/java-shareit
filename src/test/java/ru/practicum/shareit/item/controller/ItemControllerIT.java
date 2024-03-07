@@ -10,7 +10,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import ru.practicum.shareit.item.dto.CommentDto;
 import ru.practicum.shareit.item.dto.ItemCommentsDto;
 import ru.practicum.shareit.item.dto.ItemDto;
-import ru.practicum.shareit.item.service.ItemServiceDb;
+import ru.practicum.shareit.item.service.ItemServiceImpl;
 
 import java.time.LocalDateTime;
 
@@ -27,7 +27,7 @@ class ItemControllerIT {
     @Autowired
     private MockMvc mvc;
     @MockBean
-    private ItemServiceDb itemService;
+    private ItemServiceImpl itemService;
     private final String json = "application/json";
 
     @SneakyThrows

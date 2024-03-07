@@ -56,9 +56,9 @@ public class ItemController {
 
     @GetMapping
     public ResponseEntity<Collection<OutgoingItemDto>> getItemsByUser(@RequestHeader(HEADER) @Positive Long userId,
-                                                      @RequestParam(required = false, defaultValue = "0")
+                                                      @RequestParam(defaultValue = "0")
                                                       @Min(0) int from,
-                                                      @RequestParam(required = false, defaultValue = "10")
+                                                      @RequestParam(defaultValue = "10")
                                                       @Positive int size) {
         log.info("Get Items");
         return ResponseEntity.ok(itemService.getItemsByUser(userId, from, size));
@@ -66,9 +66,9 @@ public class ItemController {
 
     @GetMapping("/search")
     public ResponseEntity<Collection<ItemDto>> searchItem(@RequestParam String text,
-                                          @RequestParam(required = false, defaultValue = "0")
+                                          @RequestParam(defaultValue = "0")
                                           @Min(0) int from,
-                                          @RequestParam(required = false, defaultValue = "10")
+                                          @RequestParam(defaultValue = "10")
                                           @Positive int size) {
         log.info("Get Items/search {}", text);
         return ResponseEntity.ok(itemService.searchItem(text, from, size));

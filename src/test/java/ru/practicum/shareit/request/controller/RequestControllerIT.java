@@ -13,7 +13,7 @@ import ru.practicum.shareit.request.dto.RequestWithItemsDto;
 import ru.practicum.shareit.request.mapper.RequestMapper;
 import ru.practicum.shareit.request.mapper.RequestWithItemsMapper;
 import ru.practicum.shareit.request.model.Request;
-import ru.practicum.shareit.request.service.RequestServiceDb;
+import ru.practicum.shareit.request.service.RequestServiceImpl;
 import ru.practicum.shareit.user.model.User;
 
 import java.time.LocalDateTime;
@@ -34,7 +34,7 @@ class RequestControllerIT {
     @Autowired
     private MockMvc mvc;
     @MockBean
-    private RequestServiceDb service;
+    private RequestServiceImpl service;
     private final String json = "application/json";
 
     private User user;

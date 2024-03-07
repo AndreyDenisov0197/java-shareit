@@ -1,6 +1,7 @@
 package ru.practicum.shareit.request.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -9,7 +10,6 @@ import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.mapper.ItemMapper;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.storage.ItemRepository;
-import ru.practicum.shareit.pageRequest.MyPageRequest;
 import ru.practicum.shareit.request.dto.RequestDto;
 import ru.practicum.shareit.request.dto.RequestWithItemsDto;
 import ru.practicum.shareit.request.mapper.RequestMapper;
@@ -26,7 +26,7 @@ import java.util.stream.Collectors;
 @Service
 @Transactional
 @RequiredArgsConstructor
-public class RequestServiceDb implements RequestService {
+public class RequestServiceImpl implements RequestService {
 
     private final UserRepository userRepository;
     private final RequestRepository requestRepository;
@@ -54,7 +54,7 @@ public class RequestServiceDb implements RequestService {
 
     @Override
     public Collection<RequestWithItemsDto> getAllRequest(Long userId, int from, int size) {
-        MyPageRequest pageRequest = new MyPageRequest(from, size, SORT);
+        PageRequest pageRequest = PageRequest.of(from > 0 ? from / size : 0, size, SORT);
 
         return requestRepository.findByRequestorIdNotLike(userId, pageRequest).stream()
                 .map(RequestWithItemsMapper::toRequestWithItemsDto)

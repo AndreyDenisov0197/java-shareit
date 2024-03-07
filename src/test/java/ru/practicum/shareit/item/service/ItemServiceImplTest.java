@@ -8,6 +8,7 @@ import org.mockito.Captor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.PageRequest;
 import ru.practicum.shareit.booking.model.BookingStatus;
 import ru.practicum.shareit.booking.storage.BookingRepository;
 import ru.practicum.shareit.exception.NotAvailableItemException;
@@ -23,7 +24,6 @@ import ru.practicum.shareit.item.model.Comment;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.storage.CommentRepository;
 import ru.practicum.shareit.item.storage.ItemRepository;
-import ru.practicum.shareit.pageRequest.MyPageRequest;
 import ru.practicum.shareit.request.storage.RequestRepository;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.storage.UserRepository;
@@ -39,7 +39,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-class ItemServiceDbTest {
+class ItemServiceImplTest {
     @Mock
     private ItemRepository itemRepository;
     @Mock
@@ -51,7 +51,7 @@ class ItemServiceDbTest {
     @Mock
     private RequestRepository requestRepository;
     @InjectMocks
-    private ItemServiceDb itemService;
+    private ItemServiceImpl itemService;
     @Captor
     private ArgumentCaptor<Item> itemArgumentCaptor;
 
@@ -63,7 +63,7 @@ class ItemServiceDbTest {
     private ItemCommentsDto itemCommentsDto;
     private final int from = 0;
     private final int size = 20;
-    private MyPageRequest pageRequest;
+    private PageRequest pageRequest;
 
     @BeforeEach
     public void beforeEach() {
@@ -74,7 +74,7 @@ class ItemServiceDbTest {
         outgoingItemDto = OutgoingItemMapper.toOutgoingItemCollection(item);
         outgoingItemDto.setComments(List.of());
         itemCommentsDto = ItemCommentsMapper.toItemComments(comment);
-        pageRequest = new MyPageRequest(from, size);
+        pageRequest = PageRequest.of(from > 0 ? from / size : 0, size);
     }
 
     @Test

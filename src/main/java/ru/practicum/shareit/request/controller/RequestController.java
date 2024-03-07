@@ -39,8 +39,8 @@ public class RequestController {
 
     @GetMapping("/all")
     ResponseEntity<Collection<RequestWithItemsDto>> getAllRequest(@RequestHeader(HEADER) @Positive Long userId,
-                                         @RequestParam(required = false, defaultValue = "0") @Min(0) int from,
-                                         @RequestParam(required = false, defaultValue = "10") @Positive int size) {
+                                         @RequestParam(defaultValue = "0") @Min(0) int from,
+                                         @RequestParam(defaultValue = "10") @Positive int size) {
         log.info("GET /requests/all?from={}&size={}, userId={}", from, size, userId);
         return ResponseEntity.ok(requestService.getAllRequest(userId, from, size));
     }

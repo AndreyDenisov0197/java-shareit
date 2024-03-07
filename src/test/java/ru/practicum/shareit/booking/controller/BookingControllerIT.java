@@ -12,7 +12,7 @@ import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.dto.BookingRestDto;
 import ru.practicum.shareit.booking.model.BookingState;
 import ru.practicum.shareit.booking.model.BookingStatus;
-import ru.practicum.shareit.booking.service.BookingServiceDb;
+import ru.practicum.shareit.booking.service.BookingServiceImpl;
 import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.user.model.User;
@@ -33,7 +33,7 @@ class BookingControllerIT {
     @Autowired
     private MockMvc mvc;
     @MockBean
-    private BookingServiceDb service;
+    private BookingServiceImpl service;
     private final String json = "application/json";
 
     private BookingRestDto bookingRestDto;

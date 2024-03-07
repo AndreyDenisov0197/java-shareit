@@ -8,7 +8,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.servlet.MockMvc;
 import ru.practicum.shareit.user.dto.UserDto;
-import ru.practicum.shareit.user.service.UserServiceDb;
+import ru.practicum.shareit.user.service.UserServiceImpl;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
@@ -22,7 +22,7 @@ class UserControllerIT {
     @Autowired
     private MockMvc mvc;
     @MockBean
-    private UserServiceDb userService;
+    private UserServiceImpl userService;
 
     @SneakyThrows
     @Test

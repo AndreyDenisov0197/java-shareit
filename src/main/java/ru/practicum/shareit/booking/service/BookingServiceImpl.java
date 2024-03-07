@@ -1,6 +1,7 @@
 package ru.practicum.shareit.booking.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,7 +17,6 @@ import ru.practicum.shareit.exception.NotAvailableItemException;
 import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.storage.ItemRepository;
-import ru.practicum.shareit.pageRequest.MyPageRequest;
 import ru.practicum.shareit.user.storage.UserRepository;
 
 import java.time.LocalDateTime;
@@ -27,7 +27,7 @@ import java.util.stream.Collectors;
 @Transactional
 @Service
 @RequiredArgsConstructor
-public class BookingServiceDb implements BookingService {
+public class BookingServiceImpl implements BookingService {
 
     private final BookingRepository bookingRepository;
     private final ItemRepository itemRepository;
@@ -92,7 +92,7 @@ public class BookingServiceDb implements BookingService {
     @Override
     public Collection<BookingDto> getAllBookingForBooker(BookingState state, Long userId, int from, int size) {
         userRepository.checkUserById(userId);
-        MyPageRequest pageRequest = new MyPageRequest(from, size, SORT);
+        PageRequest pageRequest = PageRequest.of(from > 0 ? from / size : 0, size, SORT);
         Collection<BookingDto> bookingDtos = List.of();
 
         switch (state) {
@@ -107,7 +107,7 @@ public class BookingServiceDb implements BookingService {
 
             case CURRENT:
                 bookingDtos = toBookingDtoList(bookingRepository.findByBookerIdAndEndIsAfterAndStartIsBefore(userId,
-                        LocalDateTime.now(), LocalDateTime.now(), new MyPageRequest(from, size, SORT_ASC)));
+                        LocalDateTime.now(), LocalDateTime.now(), PageRequest.of(from, size, SORT_ASC)));
                 break;
 
             case WAITING:
@@ -131,8 +131,7 @@ public class BookingServiceDb implements BookingService {
 
     @Override
     public Collection<BookingDto> getAllBookingForUserItems(BookingState state, Long userId, int from, int size) {
-        MyPageRequest pageRequest = new MyPageRequest(from, size, SORT);
-
+        PageRequest pageRequest = PageRequest.of(from > 0 ? from / size : 0, size, SORT);
 
         List<Item> items = itemRepository.findByOwnerId(userId);
         if (items.isEmpty()) {

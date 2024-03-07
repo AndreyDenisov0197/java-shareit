@@ -6,11 +6,11 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.PageRequest;
 import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.item.mapper.ItemMapper;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.storage.ItemRepository;
-import ru.practicum.shareit.pageRequest.MyPageRequest;
 import ru.practicum.shareit.request.dto.RequestDto;
 import ru.practicum.shareit.request.dto.RequestWithItemsDto;
 import ru.practicum.shareit.request.mapper.RequestMapper;
@@ -29,10 +29,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
-import static ru.practicum.shareit.request.service.RequestServiceDb.SORT;
+import static ru.practicum.shareit.request.service.RequestServiceImpl.SORT;
 
 @ExtendWith(MockitoExtension.class)
-class RequestServiceDbTest {
+class RequestServiceImplTest {
     @Mock
     private UserRepository userRepository;
     @Mock
@@ -40,7 +40,7 @@ class RequestServiceDbTest {
     @Mock
     private ItemRepository itemRepository;
     @InjectMocks
-    private RequestServiceDb requestService;
+    private RequestServiceImpl requestService;
     private RequestDto requestDto;
     private User user;
     private Item item;
@@ -128,7 +128,7 @@ class RequestServiceDbTest {
     void getAllRequest() {
         int from = 0;
         int size = 20;
-        when(requestRepository.findByRequestorIdNotLike(user.getId(), new MyPageRequest(from, size, SORT)))
+            when(requestRepository.findByRequestorIdNotLike(user.getId(), PageRequest.of(from, size, SORT)))
                 .thenReturn(List.of(request));
         when(itemRepository.findByRequestId(request.getId())).thenReturn(List.of());
 
@@ -136,7 +136,7 @@ class RequestServiceDbTest {
 
         assertEquals(List.of(requestWithItemsDto), result);
         verify(itemRepository).findByRequestId(anyLong());
-        verify(requestRepository).findByRequestorIdNotLike(user.getId(), new MyPageRequest(from, size, SORT));
+        verify(requestRepository).findByRequestorIdNotLike(user.getId(), PageRequest.of(from, size, SORT));
     }
 
     @Test

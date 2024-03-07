@@ -1,6 +1,7 @@
 package ru.practicum.shareit.item.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,7 +24,6 @@ import ru.practicum.shareit.item.model.Comment;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.storage.CommentRepository;
 import ru.practicum.shareit.item.storage.ItemRepository;
-import ru.practicum.shareit.pageRequest.MyPageRequest;
 import ru.practicum.shareit.request.storage.RequestRepository;
 import ru.practicum.shareit.user.storage.UserRepository;
 
@@ -36,7 +36,7 @@ import java.util.stream.Collectors;
 @Service
 @Transactional
 @RequiredArgsConstructor
-public class ItemServiceDb implements ItemService {
+public class ItemServiceImpl implements ItemService {
 
     private final ItemRepository itemRepository;
     private final BookingRepository bookingRepository;
@@ -103,7 +103,7 @@ public class ItemServiceDb implements ItemService {
 
     @Override
     public Collection<OutgoingItemDto> getItemsByUser(Long userId, int from, int size) {
-        MyPageRequest pageRequest = new MyPageRequest(from, size);
+        PageRequest pageRequest = PageRequest.of(from > 0 ? from / size : 0, size);
 
         userRepository.checkUserById(userId);
         Collection<OutgoingItemDto> items = itemRepository.findByOwnerId(userId, pageRequest).stream()
@@ -128,7 +128,7 @@ public class ItemServiceDb implements ItemService {
         if (text.isBlank()) {
             return new ArrayList<>();
         }
-        MyPageRequest pageRequest = new MyPageRequest(from, size);
+        PageRequest pageRequest = PageRequest.of(from > 0 ? from / size : 0, size);
 
         return itemRepository.search(text, pageRequest).stream()
                 .map(ItemMapper::toItemDto)
