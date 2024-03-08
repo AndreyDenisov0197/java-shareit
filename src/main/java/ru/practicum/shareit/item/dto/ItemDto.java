@@ -1,6 +1,7 @@
 package ru.practicum.shareit.item.dto;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import ru.practicum.shareit.validation.ValidationMarker;
@@ -9,15 +10,13 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
-/**
- * TODO Sprint add-controllers.
- */
+@Builder
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 public class ItemDto {
 
-    private long id;
+    private Long id;
 
     @NotBlank(groups = ValidationMarker.OnCreate.class, message = "Item name field is blank!")
     @Size(groups = {ValidationMarker.OnCreate.class, ValidationMarker.OnUpdate.class}, max = 128,
@@ -30,5 +29,5 @@ public class ItemDto {
     @NotNull(groups = {ValidationMarker.OnCreate.class})
     private Boolean available;
 
-    private Long request;
+    private Long requestId;
 }

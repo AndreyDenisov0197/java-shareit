@@ -1,8 +1,8 @@
 package ru.practicum.shareit.user.service;
 
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.mapper.UserMapper;
@@ -12,10 +12,10 @@ import ru.practicum.shareit.user.storage.UserRepository;
 import java.util.Collection;
 import java.util.stream.Collectors;
 
-@Slf4j
+@Transactional
 @Service
 @RequiredArgsConstructor
-public class UserServiceDb implements UserService {
+public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
 
@@ -40,7 +40,8 @@ public class UserServiceDb implements UserService {
 
     @Override
     public UserDto updateUser(long id, UserDto userDto) {
-        User user = userRepository.findById(id).orElseThrow();
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("There's no user with id " + id));
 
         String name = userDto.getName();
         if (null != name && !user.getName().equals(name)) {

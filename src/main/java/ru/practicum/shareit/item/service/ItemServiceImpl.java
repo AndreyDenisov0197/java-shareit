@@ -1,6 +1,7 @@
 package ru.practicum.shareit.item.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,6 +24,7 @@ import ru.practicum.shareit.item.model.Comment;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.storage.CommentRepository;
 import ru.practicum.shareit.item.storage.ItemRepository;
+import ru.practicum.shareit.request.storage.RequestRepository;
 import ru.practicum.shareit.user.storage.UserRepository;
 
 import java.time.LocalDateTime;
@@ -34,12 +36,13 @@ import java.util.stream.Collectors;
 @Service
 @Transactional
 @RequiredArgsConstructor
-public class ItemServiceDb implements ItemService {
+public class ItemServiceImpl implements ItemService {
 
     private final ItemRepository itemRepository;
     private final BookingRepository bookingRepository;
     private final UserRepository userRepository;
     private final CommentRepository commentRepository;
+    private final RequestRepository requestRepository;
 
 
     @Override
@@ -47,6 +50,11 @@ public class ItemServiceDb implements ItemService {
         Item item = ItemMapper.toItem(itemDto);
         item.setOwner(userRepository.findById(userId)
                 .orElseThrow(() -> new NotFoundException("There's no user with id " + userId)));
+
+        if (itemDto.getRequestId() != null) {
+            item.setRequest(requestRepository.findById(itemDto.getRequestId())
+                    .orElseThrow(() -> new NotFoundException("There's no request with id")));
+        }
         return ItemMapper.toItemDto(itemRepository.save(item));
     }
 
@@ -94,9 +102,11 @@ public class ItemServiceDb implements ItemService {
     }
 
     @Override
-    public Collection<OutgoingItemDto> getItemsByUser(Long userId) {
+    public Collection<OutgoingItemDto> getItemsByUser(Long userId, int from, int size) {
+        PageRequest pageRequest = PageRequest.of(from > 0 ? from / size : 0, size);
+
         userRepository.checkUserById(userId);
-        Collection<OutgoingItemDto> items = itemRepository.findByOwnerId(userId).stream()
+        Collection<OutgoingItemDto> items = itemRepository.findByOwnerId(userId, pageRequest).stream()
                 .map(OutgoingItemMapper::toOutgoingItemCollection)
                 .collect(Collectors.toList());
 
@@ -114,11 +124,13 @@ public class ItemServiceDb implements ItemService {
     }
 
     @Override
-    public Collection<ItemDto> searchItem(String text) {
+    public Collection<ItemDto> searchItem(String text, int from, int size) {
         if (text.isBlank()) {
             return new ArrayList<>();
         }
-        return itemRepository.search(text).stream()
+        PageRequest pageRequest = PageRequest.of(from > 0 ? from / size : 0, size);
+
+        return itemRepository.search(text, pageRequest).stream()
                 .map(ItemMapper::toItemDto)
                 .filter(i -> i.getAvailable().equals(true))
                 .collect(Collectors.toList());
@@ -132,8 +144,10 @@ public class ItemServiceDb implements ItemService {
                     + " has no rights to leve a comment to item with id " + itemId + "!");
         }
         Comment comment = CommentMapper.toComment(commentDto);
-        comment.setItem(itemRepository.findById(itemId).orElseThrow());
-        comment.setAuthor(userRepository.findById(userId).orElseThrow());
+        comment.setItem(itemRepository.findById(itemId)
+                .orElseThrow(() -> new NotFoundException("There's no items with id " + itemId)));
+        comment.setAuthor(userRepository.findById(userId)
+                .orElseThrow(() -> new NotFoundException("There's no users with id " + userId)));
         return ItemCommentsMapper.toItemComments(commentRepository.save(comment));
     }
 
