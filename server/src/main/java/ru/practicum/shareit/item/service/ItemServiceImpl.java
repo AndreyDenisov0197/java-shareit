@@ -5,7 +5,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.booking.dto.LastNextBookingDto;
 import ru.practicum.shareit.booking.mapper.BookingMapper;
 import ru.practicum.shareit.booking.model.Booking;
@@ -86,23 +85,6 @@ public class ItemServiceImpl implements ItemService {
         return ItemMapper.toItemDto(itemRepository.save(item));
     }
 
-/*    @Override
-    public OutgoingItemDto getItemById(Long itemId, Long userId) {
-        userRepository.checkUserById(userId);
-        Item item = itemRepository.findById(itemId)
-                .orElseThrow(() -> new NotFoundException("There's no item with id " + itemId));
-        log.info("get itemId={} userId{} item={}", itemId, userId, item);
-        OutgoingItemDto outgoingItemDto = ItemMapper.toOutgoingItemCollection(item);
-
-        if (item.getOwner().getId().equals(userId)) {
-            log.info("if {}", item.getOwner().getId());
-            outgoingItemDto.setLastBooking(getLastBookingByItemId(itemId));
-            outgoingItemDto.setNextBooking(getNextBookingByItemId(itemId));
-        }
-        outgoingItemDto.setComments(getComments(itemId));
-        return outgoingItemDto;
-    }*/
-
     @Override
     public OutgoingItemDto getItemById(Long itemId, Long userId) {
         userRepository.checkUserById(userId);
@@ -172,14 +154,14 @@ public class ItemServiceImpl implements ItemService {
     }
 
     private LastNextBookingDto getNextBookingByItemId(Long itemId) {
-        Booking booking = bookingRepository.findFirstByItemIdAndStart_dateIsAfterAndStatusIs(itemId, LocalDateTime.now(),
-                BookingStatus.APPROVED, Sort.by(Sort.Direction.ASC, "start")).orElse(null);
+        Booking booking = bookingRepository.findFirstByItemIdAndStartAfterAndStatusOrderByStartAsc(itemId, LocalDateTime.now(),
+                BookingStatus.APPROVED).orElse(null);
         return booking != null ? BookingMapper.mapBookingToLastNextDto(booking) : null;
     }
 
     private LastNextBookingDto getLastBookingByItemId(Long itemId) {
-        Booking booking = bookingRepository.findFirstByItemIdAndStart_dateIsBeforeAndStatusIs(itemId, LocalDateTime.now(),
-                BookingStatus.APPROVED, Sort.by(Sort.Direction.DESC, "end")).orElse(null);
+        Booking booking = bookingRepository.findFirstByItemIdAndStartBeforeAndStatusOrderByEndDesc(itemId, LocalDateTime.now(),
+                BookingStatus.APPROVED).orElse(null);
         return booking != null ? BookingMapper.mapBookingToLastNextDto(booking) : null;
     }
 

@@ -49,7 +49,7 @@ public class BookingController {
 	}
 
 	@PatchMapping("/{bookingId}")
-	public ResponseEntity<Object> bookingConfirmation (@RequestHeader(HEADER) long userId,
+	public ResponseEntity<Object> bookingConfirmation(@RequestHeader(HEADER) long userId,
 													   @PathVariable Long bookingId,
 													   @RequestParam Boolean approved) {
 		log.info("Patch booking {}, userId={}, approved={}", bookingId, userId, approved);
