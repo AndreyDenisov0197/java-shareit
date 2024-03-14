@@ -9,6 +9,7 @@ import ru.practicum.shareit.validation.ValidationMarker;
 
 import javax.validation.constraints.Min;
 import javax.validation.constraints.Positive;
+import javax.validation.constraints.PositiveOrZero;
 
 @Slf4j
 @RestController
@@ -35,8 +36,8 @@ public class RequestController {
 
     @GetMapping("/all")
     ResponseEntity<Object> getAllRequest(@RequestHeader(HEADER) @Positive Long userId,
-                                                                  @RequestParam(defaultValue = "0") @Min(0) int from,
-                                                                  @RequestParam(defaultValue = "10") @Positive int size) {
+                                         @PositiveOrZero @RequestParam(name = "from", defaultValue = "0") Integer from,
+                                         @Positive @RequestParam(name = "size", defaultValue = "10") Integer size) {
         log.info("GET /requests/all?from={}&size={}, userId={}", from, size, userId);
         return requestClient.getAllRequest(userId, from, size);
     }

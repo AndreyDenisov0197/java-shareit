@@ -53,9 +53,9 @@ public class RequestServiceImpl implements RequestService {
 
     @Override
     public Collection<RequestWithItemsDto> getAllRequest(Long userId, int from, int size) {
-        PageRequest pageRequest = PageRequest.of(from > 0 ? from / size : 0, size, SORT);
+        PageRequest pageRequest = PageRequest.of(from > 0 ? from / size : 0, size);
 
-        return requestRepository.findByRequestorIdNotLike(userId, pageRequest).stream()
+        return requestRepository.findByRequestor_IdNotOrderByCreatedDesc(userId, pageRequest).stream()
                 .map(RequestMapper::toRequestWithItemsDto)
                 .peek(request ->  request.setItems(getListItems(request.getId())))
                 .collect(Collectors.toCollection(ArrayList::new));

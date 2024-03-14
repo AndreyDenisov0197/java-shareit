@@ -10,12 +10,26 @@ public class BookingDateTimeValidator implements ConstraintValidator<BookingDate
 
     @Override
     public boolean isValid(BookItemRequestDto booking, ConstraintValidatorContext context) {
-        LocalDateTime start = booking.getStart();
-        LocalDateTime end = booking.getEnd();
-        if (start == null || end == null) {
+
+        if (null == booking.getStart()) {
             return false;
         }
-        return start.isBefore(end);
+        if (null == booking.getEnd()) {
+            return false;
+        }
+        if (booking.getStart().isBefore(LocalDateTime.now())) {
+            return false;
+        }
+        if (booking.getEnd().isBefore(LocalDateTime.now())) {
+            return false;
+        }
+        if (booking.getStart().isAfter(booking.getEnd())) {
+            return false;
+        }
+        if (booking.getStart().equals(booking.getEnd())) {
+            return false;
+        }
+        return true;
     }
 
 }

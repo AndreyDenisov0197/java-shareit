@@ -1,5 +1,6 @@
 package ru.practicum.shareit.item;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.client.RestTemplateBuilder;
@@ -13,6 +14,7 @@ import ru.practicum.shareit.item.dto.ItemDto;
 
 import java.util.Map;
 
+@Slf4j
 @Service
 public class ItemClient extends BaseClient {
 
@@ -37,6 +39,7 @@ public class ItemClient extends BaseClient {
     }
 
     public ResponseEntity<Object> getItemById(long itemId, long userId) {
+        log.info("1 {}, {}", itemId, userId);
         return get("/" + itemId, userId);
     }
 

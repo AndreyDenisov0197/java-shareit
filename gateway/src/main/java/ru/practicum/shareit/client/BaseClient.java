@@ -3,6 +3,7 @@ package ru.practicum.shareit.client;
 import java.util.List;
 import java.util.Map;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -12,6 +13,7 @@ import org.springframework.lang.Nullable;
 import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.client.RestTemplate;
 
+@Slf4j
 public class BaseClient {
     protected final RestTemplate rest;
 
@@ -24,10 +26,14 @@ public class BaseClient {
     }
 
     protected ResponseEntity<Object> get(String path, long userId) {
+        log.info("2 {}, {}", path, userId);
+
         return get(path, userId, null);
     }
 
     protected ResponseEntity<Object> get(String path, Long userId, @Nullable Map<String, Object> parameters) {
+        log.info("3 {}, {}, {}", path, userId, parameters);
+
         return makeAndSendRequest(HttpMethod.GET, path, userId, parameters, null);
     }
 

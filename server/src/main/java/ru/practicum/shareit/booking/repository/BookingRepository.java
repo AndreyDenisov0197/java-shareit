@@ -54,18 +54,35 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
                                                       LocalDateTime now,
                                                       PageRequest pageRequest);
 
-    boolean existsByBookerIdAndItemIdAndEndIsBeforeAndStatusIs(Long userId,
+    boolean existsByBooker_IdAndItemIdAndEndIsBeforeAndStatusIs(Long userId,
                                                                Long itemId,
                                                                LocalDateTime now,
                                                                BookingStatus bookingStatus);
 
-    Optional<Booking> findFirstByItemIdAndStartIsAfterAndStatusIs(Long itemId,
-                                                                  LocalDateTime now,
-                                                                  BookingStatus bookingStatus,
-                                                                  Sort start);
+    Optional<Booking>  findFirstByItem_idAndEndBeforeOrderByEndDesc(Long itemId, LocalDateTime now);
 
-    Optional<Booking> findFirstByItemIdAndStartIsBeforeAndStatusIs(Long itemId,
-                                                                   LocalDateTime now,
-                                                                   BookingStatus bookingStatus,
-                                                                   Sort end);
+    Optional<Booking>  findFirstByItem_idAndStartAfterAndStatusOrderByStartAsc(Long itemId,
+                                                                               LocalDateTime now,
+                                                                               BookingStatus bookingStatus);
+
+    Optional<Booking> findFirstByItem_idAndStartAfterAndStatusOrderByEndAsc(Long itemId,
+                                                                  LocalDateTime now,
+                                                                  BookingStatus bookingStatus);
+
+    Optional<Booking> findFirstByItem_idAndStartBeforeOrderByStartAsc(Long itemId,
+                                                                   LocalDateTime now);
+
+    Collection<Booking> findByItem_id(Long itemId);
+
+    Collection<Booking> findByItem_idAndEndAfter(Long itemId, LocalDateTime now);
+
+    Collection<Booking> findByItem_idAndEndIsBefore(Long itemId, LocalDateTime now);
+
+    Collection<Booking> findByItem_idAndStartIsBefore(Long itemId, LocalDateTime now);
+
+    Collection<Booking> findByItemIdAndStartBefore(Long itemId, LocalDateTime now);
+
+    Optional<Booking> findFirstByItemIdAndStart_dateIsAfterAndStatusIs(Long itemId, LocalDateTime now, BookingStatus bookingStatus, Sort start);
+
+    Optional<Booking> findFirstByItemIdAndStart_dateIsBeforeAndStatusIs(Long itemId, LocalDateTime now, BookingStatus bookingStatus, Sort end);
 }

@@ -10,5 +10,5 @@ import java.util.Collection;
 public interface RequestRepository extends JpaRepository<Request, Long> {
     Collection<Request> findByRequestorId(Long userId, Sort sort);
 
-    Collection<Request> findByRequestorIdNotLike(Long userId, PageRequest pageRequest);
+    Collection<Request> findByRequestor_IdNotOrderByCreatedDesc(Long userId, PageRequest pageRequest);
 }
