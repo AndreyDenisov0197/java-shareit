@@ -1,5 +1,4 @@
 package ru.practicum.shareit.validation;
-import ru.practicum.shareit.validation.BookingDateTimeValidator;
 
 import javax.validation.Constraint;
 import javax.validation.Payload;

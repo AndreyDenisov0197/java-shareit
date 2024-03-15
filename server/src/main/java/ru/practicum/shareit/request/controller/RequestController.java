@@ -7,7 +7,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.request.dto.RequestDto;
 import ru.practicum.shareit.request.dto.RequestWithItemsDto;
-import ru.practicum.shareit.request.repository.RequestService;
+import ru.practicum.shareit.request.service.RequestService;
 
 import java.util.Collection;
 

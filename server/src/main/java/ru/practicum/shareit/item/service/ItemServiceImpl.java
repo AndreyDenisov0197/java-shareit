@@ -1,7 +1,6 @@
 package ru.practicum.shareit.item.service;
 
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
@@ -22,7 +21,7 @@ import ru.practicum.shareit.item.model.Comment;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.repository.CommentRepository;
 import ru.practicum.shareit.item.repository.ItemRepository;
-import ru.practicum.shareit.request.service.RequestRepository;
+import ru.practicum.shareit.request.repository.RequestRepository;
 import ru.practicum.shareit.user.repository.UserRepository;
 
 import java.time.LocalDateTime;
@@ -31,7 +30,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Slf4j
 @Service
 @RequiredArgsConstructor
 public class ItemServiceImpl implements ItemService {
@@ -88,12 +86,10 @@ public class ItemServiceImpl implements ItemService {
     @Override
     public OutgoingItemDto getItemById(Long itemId, Long userId) {
         userRepository.checkUserById(userId);
-        log.info("id {}, user {}", itemId, userId);
 
         Item item = itemRepository.findById(itemId)
                 .orElseThrow(() -> new NotFoundException("There's no item with id " + itemId));
         OutgoingItemDto outgoingItemDto = ItemMapper.toOutgoingItemCollection(item);
-        log.info("id {}, user {}, item {}", itemId, userId, item);
 
         if (item.getOwner().getId().equals(userId)) {
             outgoingItemDto.setLastBooking(getLastBookingByItemId(itemId));

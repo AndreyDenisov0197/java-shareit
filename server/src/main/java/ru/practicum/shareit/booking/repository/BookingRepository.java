@@ -1,7 +1,6 @@
 package ru.practicum.shareit.booking.repository;
 
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
 import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.booking.model.BookingStatus;
@@ -58,29 +57,6 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
                                                                Long itemId,
                                                                LocalDateTime now,
                                                                BookingStatus bookingStatus);
-
-    Optional<Booking>  findFirstByItem_idAndEndBeforeOrderByEndDesc(Long itemId, LocalDateTime now);
-
-    Optional<Booking>  findFirstByItem_idAndStartAfterAndStatusOrderByStartAsc(Long itemId,
-                                                                               LocalDateTime now,
-                                                                               BookingStatus bookingStatus);
-
-    Optional<Booking> findFirstByItem_idAndStartAfterAndStatusOrderByEndAsc(Long itemId,
-                                                                  LocalDateTime now,
-                                                                  BookingStatus bookingStatus);
-
-    Optional<Booking> findFirstByItem_idAndStartBeforeOrderByStartAsc(Long itemId,
-                                                                   LocalDateTime now);
-
-    Collection<Booking> findByItem_id(Long itemId);
-
-    Collection<Booking> findByItem_idAndEndAfter(Long itemId, LocalDateTime now);
-
-    Collection<Booking> findByItem_idAndEndIsBefore(Long itemId, LocalDateTime now);
-
-    Collection<Booking> findByItem_idAndStartIsBefore(Long itemId, LocalDateTime now);
-
-    Collection<Booking> findByItemIdAndStartBefore(Long itemId, LocalDateTime now);
 
     Optional<Booking> findFirstByItemIdAndStartAfterAndStatusOrderByStartAsc(Long itemId, LocalDateTime now, BookingStatus bookingStatus);
 
