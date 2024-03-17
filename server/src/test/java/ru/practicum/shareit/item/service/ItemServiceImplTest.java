@@ -76,6 +76,20 @@ class ItemServiceImplTest {
         pageRequest = PageRequest.of(from > 0 ? from / size : 0, size);
     }
 
+
+    @Test
+    void getItemsByUser() {
+        Sort sort = Sort.by(Sort.Direction.ASC, "id");
+        pageRequest = PageRequest.of(from > 0 ? from / size : 0, size, sort);
+        when(itemRepository.findByOwnerId(user.getId(),  pageRequest)).thenReturn(List.of(item));
+        Collection<OutgoingItemDto> collectionItems = List.of(outgoingItemDto);
+
+        Collection<OutgoingItemDto> result = itemService.getItemsByUser(user.getId(), from, size);
+
+        assertEquals(collectionItems, result);
+        verify(itemRepository).findByOwnerId(user.getId(), pageRequest);
+    }
+
     @Test
     void createItem() {
         when(itemRepository.save(any(Item.class))).thenReturn(item);
