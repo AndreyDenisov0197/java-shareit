@@ -5,9 +5,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import ru.practicum.shareit.item.dto.ItemCommentsDto;
 import ru.practicum.shareit.validation.ValidationMarker;
 import ru.practicum.shareit.item.dto.CommentDto;
 import ru.practicum.shareit.item.dto.ItemDto;
+import ru.practicum.shareit.item.dto.OutgoingItemDto;
 
 import javax.validation.constraints.Min;
 import javax.validation.constraints.Positive;
@@ -23,7 +25,7 @@ public class ItemController {
     protected static final String HEADER = "X-Sharer-User-Id";
 
     @PostMapping
-    public ResponseEntity<Object> createItem(@RequestHeader(HEADER) @Positive long userId,
+    public ResponseEntity<ItemDto> createItem(@RequestHeader(HEADER) @Positive long userId,
                                               @Validated(ValidationMarker.OnCreate.class)
                                               @RequestBody ItemDto itemDto) {
         log.info("Post Items {}, {}", userId, itemDto);
@@ -31,7 +33,7 @@ public class ItemController {
     }
 
     @PatchMapping("/{itemId}")
-    public ResponseEntity<Object> updateItem(@RequestHeader(HEADER) @Positive long userId,
+    public ResponseEntity<ItemDto> updateItem(@RequestHeader(HEADER) @Positive long userId,
                                               @Validated(ValidationMarker.OnUpdate.class)
                                               @RequestBody ItemDto itemDto,
                                               @PathVariable @Positive Long itemId) {
@@ -40,7 +42,7 @@ public class ItemController {
     }
 
     @GetMapping("/{itemId}")
-    public ResponseEntity<Object> getItemById(@PathVariable @Positive long itemId,
+    public ResponseEntity<OutgoingItemDto> getItemById(@PathVariable @Positive long itemId,
                                                        @RequestHeader(HEADER) @Positive Long userId) {
         log.info("Get Items/id {}", itemId);
         return itemClient.getItemById(itemId, userId);
@@ -68,7 +70,7 @@ public class ItemController {
     }
 
     @PostMapping("/{itemId}/comment")
-    public ResponseEntity<Object> createComments(@PathVariable @Positive Long itemId,
+    public ResponseEntity<ItemCommentsDto> createComments(@PathVariable @Positive Long itemId,
                                                           @RequestHeader(HEADER) @Positive Long userId,
                                                           @Validated(ValidationMarker.OnCreate.class)
                                                           @RequestBody CommentDto comment) {
